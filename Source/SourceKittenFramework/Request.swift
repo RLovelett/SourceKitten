@@ -421,6 +421,25 @@ public enum Request {
         }
         return fromSourceKit(sourcekitd_response_get_value(response!)) as! [String: SourceKitRepresentable]
     }
+
+    public func failableSend() throws -> Any {
+        initializeSourceKitFailable
+        let response = sourcekitd_send_request_sync(sourcekitObject)
+        defer { sourcekitd_response_dispose(response!) }
+        if sourcekitd_response_is_error(response!) {
+            let error = Request.Error(response: response!)
+            if case .connectionInterrupted = error {
+                _ = sourceKitWaitingRestoredSemaphore.wait(timeout: DispatchTime.now() + 10)
+            }
+            throw error
+        }
+        let info = sourcekitd_response_get_value(response!)
+        let ptr = sourcekitd_variant_json_description_copy(info)!
+        defer { free(ptr) }
+        let len = strlen(ptr)
+        let data = Data(bytes: ptr, count: Int(len))
+        return try JSONSerialization.jsonObject(with: data, options: [])
+    }
 }
 
 // MARK: CustomStringConvertible
