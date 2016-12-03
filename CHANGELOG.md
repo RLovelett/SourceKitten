@@ -6,9 +6,7 @@
 
 ##### Enhancements
 
-* Improve performance of Yaml parsing.  
-  [JP Simard](https://github.com/jpsim)
-  [#289](https://github.com/jpsim/SourceKitten/issues/289)
+* None.
 
 ##### Bug Fixes
 
