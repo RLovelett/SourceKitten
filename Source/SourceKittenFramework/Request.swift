@@ -423,7 +423,7 @@ public enum Request {
         return fromSourceKit(sourcekitd_response_get_value(response!)) as! [String: SourceKitRepresentable]
     }
 
-    public func failableSend() throws -> Any {
+    public func sendAndReceiveJSON() throws -> Any {
         initializeSourceKitFailable
         let response = sourcekitd_send_request_sync(sourcekitObject)
         defer { sourcekitd_response_dispose(response!) }
